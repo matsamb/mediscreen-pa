@@ -22,7 +22,12 @@ public class PatientService {
 		this.patientRepository = patientRepository;
 	}
 
-	public void savePatient(Patient newPatient) {		
+	public Integer savePatient(Patient newPatient) {		
+		log.info("Saving new patient: "+newPatient.getGiven()+" "+newPatient.getFamily());
+		return patientRepository.saveAndFlush(newPatient).getPatientId();
+	}
+	
+	public void updatePatient(Patient newPatient) {		
 		log.info("Saving new patient: "+newPatient.getGiven()+" "+newPatient.getFamily());
 		patientRepository.save(newPatient);
 	}
@@ -40,6 +45,10 @@ public class PatientService {
 		}	
 		return patientToFind;
 	}
-	
+
+	public void deletePatient(Patient newPatient) {
+		log.info("Deleting patient: "+newPatient.getGiven()+" "+newPatient.getFamily());
+		patientRepository.delete(newPatient);		
+	}
 	
 }
