@@ -31,20 +31,19 @@ import com.medi.patient.service.PatientService;
 import lombok.extern.log4j.Log4j2;
 
 @RestController
-//@RequestMapping("/patient")
 @Log4j2
 public class PatientRestController {
 
 	@Autowired
 	private PatientService patientService;
 
-	private PatientRepository patientRepository;
+//	private PatientRepository patientRepository;
 
-	public PatientRestController(PatientService patientService, PatientRepository patientRepository
+	public PatientRestController(PatientService patientService//, PatientRepository patientRepository
 
 	) {
 		this.patientService = patientService;
-		this.patientRepository = patientRepository;
+		//this.patientRepository = patientRepository;
 	}
 
 	// TODO dev without security
@@ -110,7 +109,7 @@ public class PatientRestController {
 	}
 
 	@PutMapping("/patient")
-	public ResponseEntity<Patient> updatePatient(@RequestBody Optional<Patient> patient
+	public ResponseEntity<Patient> updatePatient(@RequestBody Optional<Patient> patient, @RequestParam String family, @RequestParam String given
 	/* , @RequestHeader String authentication */) {
 		/*
 		 * if(authentication.contentEquals("Not_Authenticated")) {
@@ -122,9 +121,9 @@ public class PatientRestController {
 			log.info("No request body");
 			return ResponseEntity.badRequest().build();
 		} else {
-			log.info("Creating new patient");
+			
 			Patient newPatient = patient.get();
-
+			log.info("Updatingting new patient "+ newPatient);
 			// Validator validator =
 			// Validation.buildDefaultValidatorFactory().getValidator();
 			// Set<ConstraintViolation<Patient>> violations =

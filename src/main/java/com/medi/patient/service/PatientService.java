@@ -28,7 +28,7 @@ public class PatientService {
 	}
 	
 	public void updatePatient(Patient newPatient) {		
-		log.info("Saving new patient: "+newPatient.getGiven()+" "+newPatient.getFamily());
+		log.info("Updating patient: "+newPatient.getGiven()+" "+newPatient.getFamily());
 		patientRepository.save(newPatient);
 	}
 

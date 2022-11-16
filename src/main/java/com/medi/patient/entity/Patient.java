@@ -28,7 +28,7 @@ public class Patient implements Cloneable{
 //	@Nonnull
 	private String given;
 //	@Nonnull
-	private Date dob;
+	private LocalDate dob;
 //	@Nonnull
 	private String sex;
 //	@Nonnull
