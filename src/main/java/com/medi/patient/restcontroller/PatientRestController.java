@@ -11,6 +11,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.concurrent.MonoToListenableFutureAdapter;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -57,7 +58,7 @@ public class PatientRestController {
 		 */
 		if (patientService.findPatientByFamilyAndGiven(family, given).getFamily() == "Not_Registered") {
 			log.info(given + "" + family + " not registered");
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.noContent().build();
 		} else {
 			log.info(given + "" + family + " Found");
 			return ResponseEntity.ok(patientService.findPatientByFamilyAndGiven(family, given));
@@ -101,7 +102,7 @@ public class PatientRestController {
 						.toUri();
 				log.info("Loading new patient " + newPatient.getGiven() + " " + newPatient.getFamily() + " "
 						+ newPatient.getDob());
-				patientService.savePatient(newPatient);
+
 				return ResponseEntity.created(location).body(newPatient);
 			}
 		}
@@ -138,7 +139,7 @@ public class PatientRestController {
 			// newPatient.setPatientId(UUID.randomUUID());
 			if (patientService.findPatientByFamilyAndGiven(newPatient.getFamily(), newPatient.getGiven()).getFamily() == "Not_Registered") {
 				log.info(newPatient.getGiven()+" "+ newPatient.getFamily()+" not registered");
-				return ResponseEntity.notFound().build();
+				return ResponseEntity.noContent().build();
 			} else {
 				log.info("Patient "+newPatient.getGiven()+" "+ newPatient.getFamily()+" details updated");
 				patientService.savePatient(newPatient);
@@ -159,7 +160,7 @@ public class PatientRestController {
 		 */
 		if (patientService.findPatientByFamilyAndGiven(family, given).getFamily() == "Not_Registered") {
 			log.info(given + "" + family + " not registered");
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.noContent().build();
 		} else {
 			log.info(given + "" + family + " Found");
 			patientService.deletePatient(patientService.findPatientByFamilyAndGiven(family, given));

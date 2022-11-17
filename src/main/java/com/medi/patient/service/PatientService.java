@@ -37,7 +37,7 @@ public class PatientService {
 		Patient patientToFind = new Patient("Not_Registered");
 		for(Patient p : patientRepository.findAll()) {
 			
-			if(p.getFamily().contentEquals(family)&&p.getGiven().contentEquals(given)) {
+			if(p.getFamily().toLowerCase().contentEquals(family.toLowerCase())&&p.getGiven().toLowerCase().contentEquals(given.toLowerCase())) {
 				log.info("Patient: "+given+" "+family+", found");
 				patientToFind = p;
 				break;
