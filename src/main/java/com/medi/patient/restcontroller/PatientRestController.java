@@ -65,8 +65,9 @@ public class PatientRestController {
 	}
 
 	@PostMapping("/patient/add")
-	public ResponseEntity<Patient> createPatient(@RequestBody Optional<Patient> patient,
-			@RequestHeader String authentication) {
+	public ResponseEntity<Patient> createPatient(@RequestBody Optional<Patient> patient
+			, @RequestHeader String authentication
+			) {
 
 		if (authentication.contentEquals("bearer")) {
 			if (patient.isEmpty()) {
@@ -75,6 +76,7 @@ public class PatientRestController {
 			} else {
 				log.info("Creating new patient");
 				Patient newPatient = patient.get();
+				log.info("Creating new patient "+newPatient);
 
 				// Validator validator =
 				// Validation.buildDefaultValidatorFactory().getValidator();
@@ -89,6 +91,7 @@ public class PatientRestController {
 					if (patientService.findPatientByFamilyAndGiven(newPatient.getFamily(), newPatient.getGiven())
 							.getFamily() == "Not_Registered") {
 
+						log.info("Creating new patient "+newPatient);
 						Integer savePatientId = patientService.savePatient(newPatient);
 						// TODO transfert ID initialisation to user interface
 						newPatient.setPatientId(savePatientId);
