@@ -2,10 +2,13 @@ plugins {
 	id 'org.springframework.boot' version '2.7.5'
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
 	id 'java'
+	id "com.github.spotbugs" version "5.0.13"
+	id 'eclipse'
+	id 'jacoco'
 }
 //patient
 group = 'com.medi'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1-snapshot'
 sourceCompatibility = '17'
 
 configurations {
@@ -40,10 +43,11 @@ dependencies {
 	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'mysql:mysql-connector-java'
 	//developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	
+	testImplementation 'org.slf4j:slf4j-nop:2.0.3'
 
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.12.0'
 }
 
 /*dependencyManagement {
@@ -54,4 +58,41 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+spotbugs {
+	toolVersion = '4.7.3'
+	ignoreFailures = true
+}
+
+jacoco {
+	toolVersion = "0.8.8"
+	reportsDirectory = layout.buildDirectory.dir('$buildDir/target/site/jacoco')
+}
+
+tasks.register('applicationCodeCoverageReport', JacocoReport) {
+	sourceSets sourceSets.main
+}
+
+jacocoTestReport {
+	reports {
+		xml.enabled true
+		csv.enabled false
+		html.destination file("${buildDir}/target/site/jacoco/index")
+	}
+}
+
+test.finalizedBy jacocoTestReport
+check.dependsOn jacocoTestCoverageVerification
+
+jacocoTestCoverageVerification {
+	violationRules {
+		rule {
+			limit {
+				counter = 'LINE'
+				value = 'COVEREDRATIO'
+				minimum = 0.1
+			}
+		}
+	}
 }

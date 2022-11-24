@@ -1,6 +1,8 @@
 package com.medi.patient.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -24,7 +26,7 @@ public class PatientServiceTest {
 	private PatientService patientService;
 	
 	@Test
-	public void test() {
+	public void givenANotRegisteredPatient_whenFindPatient_thenItShouldReturnDefaultNotRegisteredPatient() {
 		
 		Patient patient  = new Patient();
 		patient.setFamily("Lax");
@@ -40,5 +42,73 @@ public class PatientServiceTest {
 		assertThat(foundPatient.getFamily()).isEqualTo("Not_Registered");
 		
 	}
+	
+	@Test
+	public void givenARegisteredPatient_whenFindPatient_thenThePatientShouldReturned() {
+		
+		Patient patient  = new Patient();
+		patient.setFamily("Lax");
+		patient.setGiven("traxx");
+		patient.setPatientId(2);
+		
+		List<Patient> patientList = List.of(patient);
+		
+		when(patientRepository.findAll()).thenReturn(patientList);
+		
+		Patient foundPatient = patientService.findPatientByFamilyAndGiven("Lax", "traxx");
+		
+		assertThat(foundPatient.getFamily()).isEqualTo("Lax");
+		
+	}
+	
+	@Test
+	public void givenARegisteredPatient_whenDeletePatient_thenRepositoryDeleteShouldBeUsedOnce() {
+		
+		Patient patient  = new Patient();
+		patient.setFamily("Lax");
+		patient.setGiven("traxx");
+		patient.setPatientId(2);
+		
+		patientService.deletePatient(patient);	
+		
+		verify(patientRepository, times(1)).delete(patient);
+		
+	}
+	
+	@Test
+	public void givenARegisteredPatient_whenUpdatePatient_thenRepositorySaveShouldBeUsedOnce() {
+		
+		Patient patient  = new Patient();
+		patient.setFamily("Lax");
+		patient.setGiven("traxx");
+		patient.setPatientId(2);
+		
+		patientService.updatePatient(patient);	
+		
+		verify(patientRepository, times(1)).save(patient);
+		
+	}
+	
+	@Test
+	public void givenANewPatient_whenSavePatient_thenRepositorySaveAndFlushShouldBeUsedOnce() {
+		
+		Patient patient  = new Patient();
+		patient.setFamily("Lax");
+		patient.setGiven("traxx");
+		//patient.setPatientId(2);
+		
+		Patient returnedPatient  = patient;
+		returnedPatient.setPatientId(1);
+		
+		when(patientRepository.saveAndFlush(patient)).thenReturn(returnedPatient);
+		
+		patientService.savePatient(patient);	
+		
+		verify(patientRepository, times(1)).saveAndFlush(patient);
+		
+	}
+	
+	
+	
 	
 }

@@ -51,29 +51,6 @@ public class PatientRestcontrollerIT {
 	}
 	
 	@Test
-	public void givenANotAuthenticatedUser_whenDeletePatientForNotARegisteredOne_thenItShouldReturnStatusBadRequest() throws Exception{
-		
-		Patient patient  = new Patient();
-		patient.setFamily("Not_Registered");
-		//patient.setGiven("Test");
-		//patient.setPatientId(1);
-		
-		when(patientService.findPatientByFamilyAndGiven("TestNone","Test")).thenReturn(patient);
-		when(patientService.savePatient(new Patient())).thenReturn(1);
-		
-		mockMvc.perform(delete("/patient")	
-				//.header("Authentication", "bearer")
-				.param("family", "TestNone")
-				.param("given", "Test")
-				.contentType(MediaType.APPLICATION_JSON)					
-					
-					.content("{\"family\":\"TestNone\",\"given\":\"Test\",\"dob\":\"1966-12-31\",\"sex\":\"F\",\"address\":\"1 Brookside St\",\"phone\":\"100-222-3333\"}")
-					.accept(MediaType.APPLICATION_JSON))
-				.andExpect(status().isBadRequest());
-		
-	}
-	
-	@Test
 	public void givenAnAuthenticatedUser_whenDeletePatientForNotARegisteredOne_thenItShouldReturnNoContent() throws Exception{
 		
 		Patient patient  = new Patient("Not_Registered");
@@ -116,29 +93,6 @@ public class PatientRestcontrollerIT {
 	}
 	
 	@Test
-	public void givenANotAuthenticatedUser_whenPutPatientForNotARegisteredOne_thenItShouldReturnStatusBadRequest() throws Exception{
-		
-		Patient patient  = new Patient();
-		patient.setFamily("Not_Registered");
-		//patient.setGiven("Test");
-		//patient.setPatientId(1);
-		
-		when(patientService.findPatientByFamilyAndGiven("TestNone","Test")).thenReturn(patient);
-		when(patientService.savePatient(new Patient())).thenReturn(1);
-		
-		mockMvc.perform(put("/patient")	
-				//.header("Authentication", "bearer")
-				.param("family", "TestNone")
-				.param("given", "Test")
-				.contentType(MediaType.APPLICATION_JSON)					
-					
-					.content("{\"family\":\"TestNone\",\"given\":\"Test\",\"dob\":\"1966-12-31\",\"sex\":\"F\",\"address\":\"1 Brookside St\",\"phone\":\"100-222-3333\"}")
-					.accept(MediaType.APPLICATION_JSON))
-				.andExpect(status().isBadRequest());
-		
-	}
-	
-	@Test
 	public void givenAnAuthenticatedUser_whenPutPatientForNotARegisteredOne_thenItShouldReturnNoContent() throws Exception{
 		
 		Patient patient  = new Patient("Not_Registered");
@@ -166,7 +120,6 @@ public class PatientRestcontrollerIT {
 		patient.setPatientId(1);		
 		
 		when(patientService.findPatientByFamilyAndGiven("TestNone","Test")).thenReturn(patient);
-		//when(patientService.savePatient(new Patient())).thenReturn(1);
 		
 		mockMvc.perform(put("/patient")	
 				.header("Authentication", "bearer")
@@ -180,23 +133,22 @@ public class PatientRestcontrollerIT {
 		
 	}
 	
-	
 	@Test
-	public void givenANotAuthenticatedUser_whenPostPatientAdd_thenItShouldReturnStatusBadRequest() throws Exception{
+	public void givenNoRequestBody_whenPutPatientForARegisteredOne_thenItShouldReturnStatusBadRequest() throws Exception{
 		
-		Patient patient  = new Patient();
-		patient.setFamily("Not_Registered");
+		//Patient patient  = new Patient("TestNone");
 		//patient.setGiven("Test");
-		//patient.setPatientId(1);
+		//patient.setPatientId(1);		
 		
-		when(patientService.findPatientByFamilyAndGiven("TestNone","Test")).thenReturn(patient);
-		when(patientService.savePatient(new Patient())).thenReturn(1);
+		//when(patientService.findPatientByFamilyAndGiven("TestNone","Test")).thenReturn(patient);
 		
-		mockMvc.perform(post("/patient/add")	
-				//.header("Authentication", "bearer")
+		mockMvc.perform(put("/patient")	
+				.header("Authentication", "bearer")
+				.param("family", "TestNone")
+				.param("given", "Test")
 				.contentType(MediaType.APPLICATION_JSON)					
 					
-					.content("{\"family\":\"TestNone\",\"given\":\"Test\",\"dob\":\"1966-12-31\",\"sex\":\"F\",\"address\":\"1 Brookside St\",\"phone\":\"100-222-3333\"}")
+					//.content("{\"patientId\":1,\"family\":\"TestNone\",\"given\":\"Test\",\"dob\":\"1966-12-31\",\"sex\":\"F\",\"address\":\"1 Brookside St\",\"phone\":\"100-222-3333\"}")
 					.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isBadRequest());
 		
@@ -221,27 +173,43 @@ public class PatientRestcontrollerIT {
 	}
 	
 	@Test
-	public void givenANotAuthenticatedUser_whenGetPatientAdd_thenItShouldReturnStatusBadRequest() throws Exception{
+	public void givenAMissingRequestBody_whenPostPatientAdd_thenItShouldReturnStatusIsBadRequest() throws Exception{
 		
-		Patient patient  = new Patient();
-		patient.setFamily("Not_Registered");
-		//patient.setGiven("Test");
-		//patient.setPatientId(1);
+		//Patient patient  = new Patient("Not_Registered");
 		
-		when(patientService.findPatientByFamilyAndGiven("TestNone","Test")).thenReturn(patient);
+		//when(patientService.findPatientByFamilyAndGiven("TestNone","Test")).thenReturn(patient);
+		//when(patientService.savePatient(new Patient())).thenReturn(1);
 		
-		mockMvc.perform(get("/patient")	
-				//.header("Authentication", "bearer")
-				.param("family", "TestNone")
-				.param("given", "Test")
+		mockMvc.perform(post("/patient/add")	
+				.header("Authentication", "bearer")
 				.contentType(MediaType.APPLICATION_JSON)					
 					
-					.content("{\"family\":\"TestNone\",\"given\":\"Test\",\"dob\":\"1966-12-31\",\"sex\":\"F\",\"address\":\"1 Brookside St\",\"phone\":\"100-222-3333\"}")
+					//.content("{\"family\":\"TestNone\",\"given\":\"Test\",\"dob\":\"1966-12-31\",\"sex\":\"F\",\"address\":\"1 Brookside St\",\"phone\":\"100-222-3333\"}")
 					.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isBadRequest());
 		
 	}
 	
+	@Test
+	public void givenAnAllReadyRegisteredPatient_whenPostPatientAdd_thenItShouldReturnStatusIsNoContent() throws Exception{
+		
+		Patient patient  = new Patient("TestNone");
+		patient.setGiven("Test");
+		patient.setPatientId(1);
+		
+		when(patientService.findPatientByFamilyAndGiven("TestNone","Test")).thenReturn(patient);
+		//when(patientService.savePatient(new Patient())).thenReturn(1);
+		
+		mockMvc.perform(post("/patient/add")	
+				.header("Authentication", "bearer")
+				.contentType(MediaType.APPLICATION_JSON)					
+					
+					.content("{\"family\":\"TestNone\",\"given\":\"Test\",\"dob\":\"1966-12-31\",\"sex\":\"F\",\"address\":\"1 Brookside St\",\"phone\":\"100-222-3333\"}")
+					.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNoContent());
+		
+	}
+		
 	@Test
 	public void givenAnAuthenticatedUser_whenGetPatientForANotRegisteredOne_thenItShouldReturnStatusNoContent() throws Exception{
 		

@@ -1,29 +1,20 @@
-package com.medi.patient.entity;
+package com.medi.patient.DTO;
 
-import java.sql.Date;
 import java.time.LocalDate;
-import java.util.UUID;
 
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-import com.medi.patient.DTO.PatientDTO;
+import com.medi.patient.entity.Patient;
 
-import jakarta.annotation.Generated;
-import jakarta.annotation.Nonnull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
 @Data
 @NoArgsConstructor
-public class Patient implements Cloneable{
+public class PatientDTO implements Cloneable {
 
-	//"family=TestNone&given=Test&dob=1966-12-31&sex=F&address=1 Brookside St&phone=100-222-3333"
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer patientId;
 //	@Nonnull
 	private String family;
@@ -37,12 +28,8 @@ public class Patient implements Cloneable{
 	private String address;
 //	@Nonnull
 	private String phone;
-	
-	public Patient(String string) {
-		this.family = string;
-	}
-	
-	public Patient(PatientDTO patient) {
+
+	public PatientDTO(Patient patient) {
 		this.patientId = patient.getPatientId();
 		this.family = patient.getFamily();
 		this.given = patient.getGiven();
@@ -51,15 +38,15 @@ public class Patient implements Cloneable{
 		this.address = patient.getAddress();
 		this.phone = patient.getPhone();
 	}
-	
+
 	public Object clone() {
-		Patient copy = null;
+		PatientDTO copy = null;
 		try {
-			copy = (Patient)super.clone();
-		}catch(CloneNotSupportedException c){
+			copy = (PatientDTO) super.clone();
+		} catch (CloneNotSupportedException c) {
 			c.printStackTrace();
 		}
 		return copy;
 	}
-	
+
 }

@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.medi.patient.DTO.PatientDTO;
 import com.medi.patient.entity.Patient;
 import com.medi.patient.repository.PatientRepository;
 import com.medi.patient.service.PatientService;
@@ -47,135 +48,81 @@ public class PatientRestController {
 
 	// TODO dev without security
 	@GetMapping("/patient")
-	public ResponseEntity<Patient> findPatient(@RequestParam String family, @RequestParam String given
-	, @RequestHeader String authentication ) {
-		
-		 if(authentication.contentEquals("bearer")) { 
-		 if (patientService.findPatientByFamilyAndGiven(family, given).getFamily() == "Not_Registered") {
-				log.info(given + "" + family + " not registered");
-				return ResponseEntity.noContent().build();
-			} else {
-				log.info(given + "" + family + " Found");
-				return ResponseEntity.ok(patientService.findPatientByFamilyAndGiven(family, given));
-			}
-		  }else {
-			  log.info(given+""+family+" not authenticated"); return
-					  ResponseEntity.badRequest().build(); 
-		 }
+	public ResponseEntity<PatientDTO> findPatient(@RequestParam String family, @RequestParam String given) {
+
+		if (patientService.findPatientByFamilyAndGiven(family, given).getFamily() == "Not_Registered") {
+			log.info(given + "" + family + " not registered");
+			return ResponseEntity.noContent().build();
+		} else {
+			log.info(given + "" + family + " Found");
+			
+			return ResponseEntity.ok(new PatientDTO(patientService.findPatientByFamilyAndGiven(family, given)));
+		}
 	}
 
 	@PostMapping("/patient/add")
-	public ResponseEntity<Patient> createPatient(@RequestBody Optional<Patient> patient
-			, @RequestHeader String authentication
-			) {
-
-		if (authentication.contentEquals("bearer")) {
-			if (patient.isEmpty()) {
-				log.info("No request body");
-				return ResponseEntity.badRequest().build();
-			} else {
-				log.info("Creating new patient");
-				Patient newPatient = patient.get();
-				log.info("Creating new patient "+newPatient);
-
-				// Validator validator =
-				// Validation.buildDefaultValidatorFactory().getValidator();
-				// Set<ConstraintViolation<Patient>> violations =
-				// validator.validate(newPatient);
-
-				if (/* violations.size()>0 */patient.isEmpty()) {
-					log.info("Bad request, constraint violations: "/* +violations */);
-					return ResponseEntity.badRequest().build();
-				} else {
-
-					if (patientService.findPatientByFamilyAndGiven(newPatient.getFamily(), newPatient.getGiven())
-							.getFamily() == "Not_Registered") {
-
-						log.info("Creating new patient "+newPatient);
-						Integer savePatientId = patientService.savePatient(newPatient);
-						// TODO transfert ID initialisation to user interface
-						newPatient.setPatientId(savePatientId);
-
-						URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/patient")
-								.buildAndExpand("?family=" + newPatient.getFamily() + "&given=" + newPatient.getGiven())
-								.toUri();
-						log.info("Loading new patient " + newPatient.getGiven() + " " + newPatient.getFamily() + " "
-								+ newPatient.getDob());
-
-						return ResponseEntity.created(location).body(newPatient);
-
-					} else {
-						log.info(newPatient.getGiven() + " " + newPatient.getFamily() + " all ready registered");
-						return ResponseEntity.noContent().build();
-
-					}
-				}
-			}
-		} else {
-			log.info(" not authenticated");
+	public ResponseEntity<PatientDTO> createPatient(@RequestBody Optional<PatientDTO> patientDTO) {
+		if (patientDTO.isEmpty()) {
+			log.info("No request body");
 			return ResponseEntity.badRequest().build();
+		} else {
+			log.info("Creating new patient");
+			Patient newPatient = new Patient(patientDTO.get());
+			log.info("Creating new patient " + newPatient);
+
+			if (patientService.findPatientByFamilyAndGiven(newPatient.getFamily(), newPatient.getGiven())
+					.getFamily() == "Not_Registered") {
+
+				log.info("Creating new patient " + newPatient);
+				Integer savePatientId = patientService.savePatient(newPatient);
+				// TODO transfert ID initialisation to user interface
+				newPatient.setPatientId(savePatientId);
+
+				URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/patient")
+						.buildAndExpand("?family=" + newPatient.getFamily() + "&given=" + newPatient.getGiven())
+						.toUri();
+				log.info("Loading new patient " + newPatient.getGiven() + " " + newPatient.getFamily() + " "
+						+ newPatient.getDob());
+
+				return ResponseEntity.created(location).body(new PatientDTO( newPatient));
+
+			} else {
+				log.info(newPatient.getGiven() + " " + newPatient.getFamily() + " all ready registered");
+				return ResponseEntity.noContent().build();
+
+			}
 		}
 	}
 
 	@PutMapping("/patient")
-	public ResponseEntity<Patient> updatePatient(@RequestBody Optional<Patient> patient, @RequestParam String family,
-			@RequestParam String given, @RequestHeader String authentication) {
+	public ResponseEntity<PatientDTO> updatePatient(@RequestBody Optional<PatientDTO> patientDTO, @RequestParam String family,
+			@RequestParam String given) {
 
-		if (authentication.contentEquals("bearer")) {
-			if (patient.isEmpty()) {
-				log.info("No request body");
-				return ResponseEntity.badRequest().build();
-			} else {
+		if(patientDTO.isPresent()) {
+		Patient newPatient = new Patient(patientDTO.get());
+		log.info("Updatingting new patient " + newPatient);
 
-				Patient newPatient = patient.get();
-				log.info("Updatingting new patient " + newPatient);
-				// Validator validator =
-				// Validation.buildDefaultValidatorFactory().getValidator();
-				// Set<ConstraintViolation<Patient>> violations =
-				// validator.validate(newPatient);
-
-				// if (/* violations.size()>0 */patient.isEmpty()) {
-				// log.info("Bad request, constraint violations: "/* +violations */);
-				// return ResponseEntity.badRequest().build();
-				// } else {
-
-				// TODO transfert ID initialisation to user interface
-				// newPatient.setPatientId(UUID.randomUUID());
-				if (patientService.findPatientByFamilyAndGiven(newPatient.getFamily(), newPatient.getGiven())
-						.getFamily() == "Not_Registered") {
-					log.info(newPatient.getGiven() + " " + newPatient.getFamily() + " not registered");
-					return ResponseEntity.noContent().build();
-				} else {
-					log.info("Patient " + newPatient.getGiven() + " " + newPatient.getFamily() + " details updated");
-					patientService.savePatient(newPatient);
-					return ResponseEntity.ok(newPatient);
-				}
-				// }
-			}
+		if (patientService.findPatientByFamilyAndGiven(newPatient.getFamily(), newPatient.getGiven())
+				.getFamily() == "Not_Registered") {
+			log.info(newPatient.getGiven() + " " + newPatient.getFamily() + " not registered");
+			return ResponseEntity.noContent().build();
 		} else {
-			log.info(given + "" + family + " not authenticated");
+			log.info("Patient " + newPatient.getGiven() + " " + newPatient.getFamily() + " details updated");
+			patientService.savePatient(newPatient);
+			return ResponseEntity.ok(new PatientDTO(newPatient));
+		}
+		}else {
+			log.info("NoRequestBody ");
 			return ResponseEntity.badRequest().build();
 		}
 	}
 
 	@DeleteMapping("/patient")
-	public ResponseEntity<Patient> deletePatient(@RequestParam String family, @RequestParam String given,
-			@RequestHeader String authentication) {
+	public ResponseEntity<PatientDTO> deletePatient(@RequestParam String family, @RequestParam String given) {
 
-		if (authentication.contentEquals("bearer")) {
-			if (patientService.findPatientByFamilyAndGiven(family, given).getFamily() == "Not_Registered") {
-				log.info(given + "" + family + " not registered");
-				return ResponseEntity.noContent().build();
-			} else {
-				log.info(given + "" + family + " Found");
-				patientService.deletePatient(patientService.findPatientByFamilyAndGiven(family, given));
-				return ResponseEntity.noContent().build();
-			}
-		} else {
-			log.info(given + "" + family + " not authenticated");
-			return ResponseEntity.badRequest().build();
+		log.info(given + "" + family + " Found");
+		patientService.deletePatient(patientService.findPatientByFamilyAndGiven(family, given));
+		return ResponseEntity.noContent().build();
 
-		}
 	}
-
 }
