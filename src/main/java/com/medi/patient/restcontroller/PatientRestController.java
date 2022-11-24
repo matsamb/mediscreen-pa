@@ -2,32 +2,19 @@ package com.medi.patient.restcontroller;
 
 import java.net.URI;
 import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.Valid;
-import javax.validation.Validation;
-import javax.validation.Validator;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.concurrent.MonoToListenableFutureAdapter;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.medi.patient.DTO.PatientDTO;
 import com.medi.patient.entity.Patient;
-import com.medi.patient.repository.PatientRepository;
 import com.medi.patient.service.PatientService;
 
 import lombok.extern.log4j.Log4j2;
@@ -39,14 +26,10 @@ public class PatientRestController {
 	@Autowired
 	private PatientService patientService;
 
-	public PatientRestController(PatientService patientService// , PatientRepository patientRepository
-
-	) {
+	PatientRestController(PatientService patientService){
 		this.patientService = patientService;
-		// this.patientRepository = patientRepository;
 	}
 
-	// TODO dev without security
 	@GetMapping("/patient")
 	public ResponseEntity<PatientDTO> findPatient(@RequestParam String family, @RequestParam String given) {
 
@@ -56,7 +39,7 @@ public class PatientRestController {
 		} else {
 			log.info(given + "" + family + " Found");
 			
-			return ResponseEntity.ok(new PatientDTO(patientService.findPatientByFamilyAndGiven(family, given)));
+			return ResponseEntity.ok(patientService.findPatientByFamilyAndGiven(family, given));
 		}
 	}
 
@@ -74,8 +57,7 @@ public class PatientRestController {
 					.getFamily() == "Not_Registered") {
 
 				log.info("Creating new patient " + newPatient);
-				Integer savePatientId = patientService.savePatient(newPatient);
-				// TODO transfert ID initialisation to user interface
+				Integer savePatientId = patientService.savePatient(new PatientDTO(newPatient));
 				newPatient.setPatientId(savePatientId);
 
 				URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/patient")
@@ -108,7 +90,7 @@ public class PatientRestController {
 			return ResponseEntity.noContent().build();
 		} else {
 			log.info("Patient " + newPatient.getGiven() + " " + newPatient.getFamily() + " details updated");
-			patientService.savePatient(newPatient);
+			patientService.savePatient(new PatientDTO(newPatient));
 			return ResponseEntity.ok(new PatientDTO(newPatient));
 		}
 		}else {

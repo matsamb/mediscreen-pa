@@ -13,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.medi.patient.DTO.PatientDTO;
 import com.medi.patient.entity.Patient;
 import com.medi.patient.repository.PatientRepository;
 
@@ -37,7 +38,7 @@ public class PatientServiceTest {
 		
 		when(patientRepository.findAll()).thenReturn(patientList);
 		
-		Patient foundPatient = patientService.findPatientByFamilyAndGiven("Max", "Plaxx");
+		Patient foundPatient = new Patient(patientService.findPatientByFamilyAndGiven("Max", "Plaxx"));
 		
 		assertThat(foundPatient.getFamily()).isEqualTo("Not_Registered");
 		
@@ -55,7 +56,7 @@ public class PatientServiceTest {
 		
 		when(patientRepository.findAll()).thenReturn(patientList);
 		
-		Patient foundPatient = patientService.findPatientByFamilyAndGiven("Lax", "traxx");
+		Patient foundPatient = new Patient(patientService.findPatientByFamilyAndGiven("Lax", "traxx"));
 		
 		assertThat(foundPatient.getFamily()).isEqualTo("Lax");
 		
@@ -69,7 +70,7 @@ public class PatientServiceTest {
 		patient.setGiven("traxx");
 		patient.setPatientId(2);
 		
-		patientService.deletePatient(patient);	
+		patientService.deletePatient(new PatientDTO(patient));	
 		
 		verify(patientRepository, times(1)).delete(patient);
 		
@@ -83,7 +84,7 @@ public class PatientServiceTest {
 		patient.setGiven("traxx");
 		patient.setPatientId(2);
 		
-		patientService.updatePatient(patient);	
+		patientService.updatePatient(new PatientDTO(patient));	
 		
 		verify(patientRepository, times(1)).save(patient);
 		
@@ -102,7 +103,7 @@ public class PatientServiceTest {
 		
 		when(patientRepository.saveAndFlush(patient)).thenReturn(returnedPatient);
 		
-		patientService.savePatient(patient);	
+		patientService.savePatient(new PatientDTO(patient));	
 		
 		verify(patientRepository, times(1)).saveAndFlush(patient);
 		

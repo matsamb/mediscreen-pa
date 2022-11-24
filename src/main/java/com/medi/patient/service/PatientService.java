@@ -1,13 +1,11 @@
 package com.medi.patient.service;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.medi.patient.DTO.PatientDTO;
 import com.medi.patient.entity.Patient;
 import com.medi.patient.repository.PatientRepository;
-//import com.netflix.discovery.converters.Auto;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -22,17 +20,17 @@ public class PatientService {
 		this.patientRepository = patientRepository;
 	}
 
-	public Integer savePatient(Patient newPatient) {		
+	public Integer savePatient(PatientDTO newPatient) {		
 		log.info("Saving new patient: "+newPatient.getGiven()+" "+newPatient.getFamily());
-		return patientRepository.saveAndFlush(newPatient).getPatientId();
+		return patientRepository.saveAndFlush(new Patient(newPatient)).getPatientId();
 	}
 	
-	public void updatePatient(Patient newPatient) {		
+	public void updatePatient(PatientDTO newPatient) {		
 		log.info("Updating patient: "+newPatient.getGiven()+" "+newPatient.getFamily());
-		patientRepository.save(newPatient);
+		patientRepository.save(new Patient(newPatient));
 	}
 
-	public Patient findPatientByFamilyAndGiven(String family, String given) {
+	public PatientDTO findPatientByFamilyAndGiven(String family, String given) {
 		log.info("looking for patient: "+given+" "+family);
 		Patient patientToFind = new Patient("Not_Registered");
 		for(Patient p : patientRepository.findAll()) {
@@ -43,12 +41,12 @@ public class PatientService {
 				break;
 			}		
 		}	
-		return patientToFind;
+		return new PatientDTO(patientToFind);
 	}
 
-	public void deletePatient(Patient newPatient) {
+	public void deletePatient(PatientDTO newPatient) {
 		log.info("Deleting patient: "+newPatient.getGiven()+" "+newPatient.getFamily());
-		patientRepository.delete(newPatient);		
+		patientRepository.delete(new Patient(newPatient));		
 	}
 	
 }

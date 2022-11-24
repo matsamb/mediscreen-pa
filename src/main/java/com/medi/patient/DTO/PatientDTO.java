@@ -2,10 +2,6 @@ package com.medi.patient.DTO;
 
 import java.time.LocalDate;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-
 import com.medi.patient.entity.Patient;
 
 import lombok.Data;
@@ -16,17 +12,11 @@ import lombok.NoArgsConstructor;
 public class PatientDTO implements Cloneable {
 
 	private Integer patientId;
-//	@Nonnull
 	private String family;
-//	@Nonnull
 	private String given;
-//	@Nonnull
 	private LocalDate dob;
-//	@Nonnull
 	private String sex;
-//	@Nonnull
 	private String address;
-//	@Nonnull
 	private String phone;
 
 	public PatientDTO(Patient patient) {
