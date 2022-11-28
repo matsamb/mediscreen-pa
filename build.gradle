@@ -8,7 +8,7 @@ plugins {
 }
 //patient
 group = 'com.medi'
-version = '0.0.1-snapshot'
+version = '0.0.1'
 sourceCompatibility = '17'
 
 configurations {
