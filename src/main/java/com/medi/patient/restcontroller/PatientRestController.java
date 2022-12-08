@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.medi.patient.DTO.PatientDTO;
+import com.medi.patient.configuration.MedConfigs;
 import com.medi.patient.entity.Patient;
 import com.medi.patient.service.PatientService;
 
@@ -22,9 +23,9 @@ import lombok.extern.log4j.Log4j2;
 
 @RestController
 @Log4j2
-@CrossOrigin(origins = "http://localhost:4200"/*"localhost:4200/patient""${medconfigs.angularurl}"*/)
+//@CrossOrigin(origins = "http://localhost:4200"/*"localhost:4200/patient""${medconfigs.angularurl}"*/)
 public class PatientRestController {
-
+	
 	@Autowired
 	private PatientService patientService;
 
